@@ -1,4 +1,4 @@
-package api
+package main
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var router *gin.Engine
-
 var apiUrl = "https://studio-api.prod.suno.com"
+
 var authUrl = "https://auth.suno.com"
 
-// suno
-func init() {
+// var authUrl = "https://dev.factory.51zhiyong.com"
+
+func main() {
 	router := gin.Default()
 	router.Any("/*path", func(context *gin.Context) {
 		uri := context.Param("path")
@@ -73,8 +73,7 @@ func init() {
 		// context.DataFromReader(resp.StatusCode, resp.ContentLength, "application/json", resp.Body, resp.Cookies())
 		context.JSON(resp.StatusCode, resp.Body)
 	})
-}
 
-func Listen(w http.ResponseWriter, r *http.Request) {
-	router.ServeHTTP(w, r)
+	fmt.Println("网关已启动，监听 :8080")
+	router.Run(":8080")
 }
