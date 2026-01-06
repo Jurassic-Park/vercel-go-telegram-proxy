@@ -11,6 +11,7 @@ var router *gin.Engine
 
 var apiUrl = "https://studio-api.prod.suno.com"
 
+// suno
 func init() {
 	router = gin.Default()
 	router.Any("/*path", func(context *gin.Context) {
