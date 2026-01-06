@@ -15,6 +15,7 @@ func init() {
 	router = gin.Default()
 	router.Any("/*path", func(context *gin.Context) {
 		uri := context.Param("path")
+		fmt.Println("请求的链接", uri)
 		// if !strings.Contains(uri, "/suno-api") {
 		// 	context.String(http.StatusNotFound, "404 Not found")
 		// 	return
