@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 
@@ -78,14 +77,23 @@ func Suno(router *gin.Engine) {
 
 		reader := resp.Body
 
-		body, err := io.ReadAll(resp.Body)
-		fmt.Println("请求结果：", string(body), resp.StatusCode)
+		// body, err := io.ReadAll(resp.Body)
+		// fmt.Println("请求结果：", string(body), resp.StatusCode)
 
 		contentLength := resp.ContentLength
 		contentType := resp.Header.Get("Content-Type")
 
 		extraHeaders := map[string]string{
 			// "Content-Disposition": `attachment; filename="gopher.png"`,
+		}
+		for key, values := range resp.Header {
+			if key == "Content-Encoding" || key == "Content-Length" ||
+				key == "Transfer-Encoding" || key == "Connection" {
+				continue
+			}
+			for _, value := range values {
+				extraHeaders[key] = value
+			}
 		}
 
 		context.DataFromReader(resp.StatusCode, contentLength, contentType, reader, extraHeaders)
