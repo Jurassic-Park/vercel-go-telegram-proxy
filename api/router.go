@@ -61,10 +61,10 @@ func Proxy(router *gin.Engine) {
 		}
 		// 获取除cookie外的header
 		for key, values := range context.Request.Header {
-			if strings.Contains(key, "Vercel") || key == "Cookie" || key == "Accept-Encoding" ||
-				key == "Accept" || key == "Connection" || key == "Content-Length" || key == "Host" ||
-				key == "Origin" || key == "Referer" || key == "User-Agent" ||
-				strings.Contains(key, "Forwarded") || key == "X-Real-Ip" {
+			if strings.Contains(key, "Vercel") || key == "Cookie" ||
+				key == "Connection" || key == "Host" ||
+				key == "Origin" || key == "Referer" ||
+				strings.Contains(key, "Forwarded") {
 				continue
 			}
 			for _, value := range values {
@@ -77,7 +77,7 @@ func Proxy(router *gin.Engine) {
 		client := &http.Client{
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
-					Timeout:   1000 * time.Millisecond,
+					Timeout:   30 * time.Second,
 					KeepAlive: 30 * time.Second,
 				}).DialContext,
 				ResponseHeaderTimeout: 150 * time.Second,
