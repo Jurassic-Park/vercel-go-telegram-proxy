@@ -2,8 +2,10 @@ package api
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -72,7 +74,17 @@ func Proxy(router *gin.Engine) {
 		}
 		fmt.Println("请求地址:", url, context.Request.Method, "body:", context.Request.Body)
 
-		resp, err := http.DefaultClient.Do(req)
+		client := &http.Client{
+			Transport: &http.Transport{
+				DialContext: (&net.Dialer{
+					Timeout:   1000 * time.Millisecond,
+					KeepAlive: 30 * time.Second,
+				}).DialContext,
+				ResponseHeaderTimeout: 150 * time.Second,
+			},
+		}
+
+		resp, err := client.Do(req)
 		if err != nil {
 			fmt.Println(err)
 			context.String(http.StatusBadRequest, err.Error())
