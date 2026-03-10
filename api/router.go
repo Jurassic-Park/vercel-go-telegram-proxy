@@ -46,7 +46,6 @@ func Proxy(router *gin.Engine) {
 			return
 		}
 		url := reqUrl + uri
-		fmt.Println("请求", url, context.Request.Method)
 		req, err := http.NewRequestWithContext(context, context.Request.Method, url, context.Request.Body)
 		if err != nil {
 			fmt.Println(err)
@@ -64,9 +63,11 @@ func Proxy(router *gin.Engine) {
 				continue
 			}
 			for _, value := range values {
+				fmt.Printf("添加header: %s=%s\n", key, value)
 				req.Header.Add(key, value)
 			}
 		}
+		fmt.Println("请求地址:", url, context.Request.Method, "body:", context.Request.Body)
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
