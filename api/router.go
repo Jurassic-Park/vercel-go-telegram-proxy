@@ -59,12 +59,10 @@ func Proxy(router *gin.Engine) {
 		}
 		// 获取除cookie外的header
 		for key, values := range context.Request.Header {
-			if strings.Contains(key, "Vercel") {
-				continue
-			}
 			if strings.Contains(key, "Vercel") || key == "Cookie" || key == "Accept-Encoding" ||
 				key == "Accept" || key == "Connection" || key == "Content-Length" || key == "Host" ||
-				key == "Origin" || key == "Referer" || key == "User-Agent" {
+				key == "Origin" || key == "Referer" || key == "User-Agent" ||
+				strings.Contains(key, "Forwarded") || key == "X-Real-Ip" {
 				continue
 			}
 			for _, value := range values {
