@@ -54,12 +54,17 @@ func Proxy(router *gin.Engine) {
 		}
 		cookies := context.Request.Cookies()
 		for _, cookie := range cookies {
+			fmt.Printf("添加cookie: %s=%s\n", cookie.Name, cookie.Value)
 			req.AddCookie(cookie)
 		}
 		// 获取除cookie外的header
 		for key, values := range context.Request.Header {
-			if key == "Cookie" || key == "Accept-Encoding" ||
-				key == "Accept" {
+			if strings.Contains(key, "Vercel") {
+				continue
+			}
+			if strings.Contains(key, "Vercel") || key == "Cookie" || key == "Accept-Encoding" ||
+				key == "Accept" || key == "Connection" || key == "Content-Length" || key == "Host" ||
+				key == "Origin" || key == "Referer" || key == "User-Agent" {
 				continue
 			}
 			for _, value := range values {
