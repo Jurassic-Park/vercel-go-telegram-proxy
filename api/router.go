@@ -10,24 +10,20 @@ import (
 
 var router *gin.Engine
 
-// suno
 func init() {
 	router = gin.Default()
-	Suno(router)
+	Proxy(router)
 }
 
 func Listen(w http.ResponseWriter, r *http.Request) {
 	router.ServeHTTP(w, r)
 }
 
-const apiUrl = "https://studio-api.prod.suno.com"
-const authUrl = "https://auth.suno.com"
-
-func Suno(router *gin.Engine) {
+func Proxy(router *gin.Engine) {
 
 	router.Any("/*path", func(context *gin.Context) {
 		uri := context.Param("path")
-		reqUrl := apiUrl
+		var reqUrl string
 
 		// 获取query参数
 		queryParams := context.Request.URL.RawQuery
@@ -36,10 +32,15 @@ func Suno(router *gin.Engine) {
 		}
 
 		if after, ok := strings.CutPrefix(uri, "/suno.com-api"); ok {
+			reqUrl = "https://studio-api.prod.suno.com"
 			uri = after
 		} else if after0, ok0 := strings.CutPrefix(uri, "/suno.com-auth-api"); ok0 {
+			reqUrl = "https://auth.suno.com"
 			uri = after0
-			reqUrl = authUrl
+		} else if after1, ok1 := strings.CutPrefix(uri, "/aiplatform.googleapis.com"); ok1 {
+			// 默认 us-central1
+			reqUrl = "https://us-central1-aiplatform.googleapis.com"
+			uri = after1
 		} else {
 			context.String(http.StatusNotFound, "404 Not found")
 			return
